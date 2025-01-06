@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emotional Nuance Translator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #0c0c0c;
+      color: #333;
+    }
+    header {
+      background-color: black;
+      color: rebeccapurple;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header img {
+      height: 100px; 
+      width: auto;  
+      margin-right: 10px; 
+    }    
+    header h1 {
+      margin: auto;
+      font-size: 40px;
+      font-style: oblique;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: black;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      font-style: oblique;
+      color: white;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid black;
+      border-radius: 4px;
+      resize: vertical;
+      font-style: unset;
+      color: #0c0c0c;
+      font-size: 17px;
+    }
+    select, button {
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid black;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button {
+      background-color: transparent;
+      color: white;
+      border: aqua;
+      padding: 15px 30px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 1s;
+      font-weight: bold;
+      justify-content: center;
+      align-items: center;
+    }
+    button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transform: scale(1.15);
+    }
+    .output {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid black;
+      border-radius: 4px;
+      background-color: rgb(44, 43, 43);
+      color: white;
+    }
+    .input-field {
+      border: 2px solid black;
+      border-radius: 25px;
+      padding: 10px 20px;
+      font-size: 16px;
+      width: 100%;
+      transition: border 0.3s ease;
+      color: #0c0c0c;
+    }
+    .input-field:focus {
+      border-color: #6200ea;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="App logo">
+    <h1>Emotional Nuance Translator</h1>
+  </header>  
+  <div class="container">
+    <h2>Translate Text with Emotional Nuances</h2>
+    <textarea id="inputText" rows="5" placeholder="Enter your text here..."></textarea>
+    <div>
+      <label for="sourceLanguage">From:</label>
+      <select id="sourceLanguage">
+        <option value="en">English</option>
+        <option value="es">Spanish</option>
+        <option value="fr">French</option>
+        <option value="te">Telugu</option>
+        <option value="ta">Tamil</option>
+        <option value="ur">Urdu</option>
+        <option value="hi">Hindi</option>
+      </select>
+      <label for="targetLanguage">To:</label>
+      <select id="targetLanguage">
+        <option value="es">Spanish</option>
+        <option value="fr">French</option>
+        <option value="en">English</option>
+        <option value="te">Telugu</option>
+        <option value="ta">Tamil</option>
+        <option value="ur">Urdu</option>
+        <option value="hi">Hindi</option>
+      </select>
+      <button onclick="translateText()">Translate</button>
+    </div>
+    <div class="output" id="outputText">
+      <p><strong>Translated Text:</strong></p>
+      <p id="translatedText">Your translation will appear here.</p>
+      <p><strong>Sentiment:</strong></p>
+      <p id="sentimentText">Sentiment analysis result will appear here.</p>
+    </div>
+  </div>
+  <script>
+    async function translateText() {
+      const inputText = document.getElementById("inputText").value;
+      const sourceLanguage = document.getElementById("sourceLanguage").value;
+      const targetLanguage = document.getElementById("targetLanguage").value;
+
+      try {
+        const response = await fetch("/translate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: inputText,
+            source_language: sourceLanguage,
+            target_language: targetLanguage,
+          }),
+        });
+
+        const data = await response.json();
+        document.getElementById("translatedText").innerText = data.translated_text;
+        document.getElementById("sentimentText").innerText = data.sentiment;
+      } catch (error) {
+        console.error("Error:", error);
+        document.getElementById("translatedText").innerText = "Error occurred while translating.";
+        document.getElementById("sentimentText").innerText = "Error occurred while analyzing sentiment.";
+      }
+    }
+  </script>
+</body>
+</html>
